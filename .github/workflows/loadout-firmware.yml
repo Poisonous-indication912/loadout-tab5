@@ -1,8 +1,9 @@
 name: Build LOADOUT firmware
 
 # Compila el firmware de la Tab5 y publica una Release con:
-#   - loadout-tab5.bin   (imagen de app para OTA)
-#   - latest.json        (manifest que lee el dispositivo)
+#   - loadout-tab5.bin          (imagen de app para OTA, offset 0x20000)
+#   - loadout-tab5-factory.bin  (imagen completa @ 0x0 para flasheo desde cero / web flasher)
+#   - latest.json               (manifest OTA que lee el dispositivo)
 # Dispara al hacer push de un tag vX.Y.Z (ej. git tag v1.1.0 && git push --tags).
 # Tambien se puede lanzar a mano (workflow_dispatch) para una build de prueba.
 
@@ -46,7 +47,12 @@ jobs:
           cd platforms/tab5
           idf.py build
 
-          cp build/m5stack_tab5.bin ../../loadout-tab5.bin
+          # App image (OTA, se escribe en la ranura libre) + imagen factory fusionada
+          # (bootloader + tabla de particiones + ota_data + app) para flasheo a 0x0.
+          # @flash_args lleva los offsets/flags exactos que genera idf.py (no hardcode).
+          cp build/m5stack_tab5.bin "$GITHUB_WORKSPACE/loadout-tab5.bin"
+          ( cd build && esptool.py --chip esp32p4 merge_bin -o "$GITHUB_WORKSPACE/loadout-tab5-factory.bin" @flash_args )
+
           cat > ../../latest.json <<EOF
           {
             "version": "$VER",
@@ -61,6 +67,7 @@ jobs:
           name: loadout-${{ env.VER }}
           path: |
             loadout-tab5.bin
+            loadout-tab5-factory.bin
             latest.json
 
       - name: Publish Release
@@ -71,4 +78,5 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: |
             loadout-tab5.bin
+            loadout-tab5-factory.bin
             latest.json

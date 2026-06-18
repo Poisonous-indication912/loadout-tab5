@@ -45,6 +45,31 @@ flowchart TD
     K -->|no| D
 ```
 
+## Install
+
+The easiest way is the browser-based flasher (Chrome or Edge on desktop, nothing to
+install):
+
+**https://0day1day.github.io/loadout-tab5/**
+
+Connect the Tab5 over USB-C, click "Connect & Flash LOADOUT", pick the serial port, and
+confirm. A full erase and install is performed.
+
+Command-line alternative (esptool): download `loadout-tab5-factory.bin` from the
+[latest release](https://github.com/0day1day/loadout-tab5/releases/latest) and run:
+
+```bash
+esptool --chip esp32p4 write_flash 0x0 loadout-tab5-factory.bin
+```
+
+Release assets:
+
+- `loadout-tab5-factory.bin` — full image for a clean flash at offset `0x0`.
+- `loadout-tab5.bin` — app-only image, used by the on-device OTA updater.
+- `latest.json` — OTA manifest; set its URL as `ota_url` in `loadout.conf`.
+
+To build from source instead, see [Building](#building).
+
 ## Purpose
 
 The Tab5 is a capable ESP32-P4 device (1280x720 touch, 32 MB PSRAM, camera, IMU, RTC,

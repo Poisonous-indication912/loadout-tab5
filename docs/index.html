@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOADOUT - Web Flasher</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <style>
+    :root { --bg:#06120c; --card:#0c1f16; --border:#1d3a2b; --accent:#39ff9a; --muted:#7a8a82; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--bg); color: #d6f5e4;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .card {
+      width: 100%; max-width: 640px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 14px; padding: 32px;
+    }
+    h1 { margin: 0 0 4px; font-size: 28px; color: #eafff4; letter-spacing: 1px; }
+    h1 .slash { color: var(--accent); }
+    p { color: var(--muted); line-height: 1.55; }
+    .btn-row { margin: 28px 0 8px; }
+    esp-web-install-button { --esp-tools-button-color: var(--accent); --esp-tools-button-text-color: #06120c; }
+    .req { font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 24px; padding-top: 16px; }
+    .req b { color: #d6f5e4; }
+    code { background: #06120c; border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; color: var(--accent); }
+    a { color: var(--accent); }
+    .unsupported { color: #ff8a80; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1><span class="slash">//</span> LOADOUT</h1>
+    <p>Firmware launcher and hardware toolbox for the <b>M5Stack Tab5</b> (ESP32-P4).
+       Flash the latest release straight from your browser - no tools to install.</p>
+
+    <div class="btn-row">
+      <esp-web-install-button manifest="manifest.json">
+        <button slot="activate">Connect &amp; Flash LOADOUT</button>
+        <span slot="unsupported" class="unsupported">
+          Your browser does not support Web Serial. Use Chrome or Edge on desktop.
+        </span>
+        <span slot="not-allowed" class="unsupported">
+          Web Serial is not allowed. Open this page over HTTPS in Chrome or Edge.
+        </span>
+      </esp-web-install-button>
+    </div>
+
+    <div class="req">
+      <p><b>Requirements:</b> Google Chrome or Microsoft Edge on desktop, and the Tab5
+         connected over USB-C. Click the button, pick the device's serial port, and confirm.
+         A full erase + install is performed.</p>
+      <p>Prefer the command line? Download <code>loadout-tab5-factory.bin</code> from the
+         <a href="https://github.com/0day1day/loadout-tab5/releases/latest">latest release</a>
+         and run <code>esptool --chip esp32p4 write_flash 0x0 loadout-tab5-factory.bin</code>.</p>
+      <p>Source and docs:
+         <a href="https://github.com/0day1day/loadout-tab5">github.com/0day1day/loadout-tab5</a></p>
+    </div>
+  </div>
+</body>
+</html>
