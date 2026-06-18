@@ -1,0 +1,9 @@
+.cache
+.vscode
+build
+dependencies
+.DS_Store
+
+# desktop sim build
+/build
+/build_desktop

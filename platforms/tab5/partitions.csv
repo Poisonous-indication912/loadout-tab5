@@ -1,0 +1,14 @@
+# Name,          Type, SubType, Offset,   Size, Flags
+# LOADOUT estilo Launcher: DOS ranuras de app (ota_0/ota_1) + rollback.
+#  - LOADOUT vive en una ranura (la que sea boot/valida).
+#  - Auto-update: se escribe en la ranura libre, set_boot, reinicia y se marca
+#    valida -> persiste (ping-pong A<->B).
+#  - Lanzar firmware externo: se escribe en la ranura libre, set_boot, reinicia
+#    SIN marcar valida -> en el siguiente reset el bootloader hace rollback a la
+#    ranura del launcher ("reset = volver al launcher" se mantiene).
+nvs,             data, nvs,     0x9000,   0x6000,
+otadata,         data, ota,     0xf000,   0x2000,
+phy_init,        data, phy,     0x11000,  0x1000,
+ota_0,           app,  ota_0,   0x20000,  0x6E0000,
+ota_1,           app,  ota_1,   ,         0x6E0000,
+storage,         data, spiffs,  ,         0x220000,
