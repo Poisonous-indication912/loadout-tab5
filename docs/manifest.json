@@ -7,7 +7,7 @@
       "chipFamily": "ESP32-P4",
       "parts": [
         {
-          "path": "https://github.com/0day1day/loadout-tab5/releases/latest/download/loadout-tab5-factory.bin",
+          "path": "loadout-tab5-factory.bin",
           "offset": 0
         }
       ]
